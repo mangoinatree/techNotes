@@ -2,12 +2,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons"
 import { useNavigate } from 'react-router-dom'
 
-import { useSelector } from 'react-redux'
-import { selectNoteById } from './notesApiSlice'
+import { useGetNotesQuery } from './notesApiSlice'
+import { memo } from 'react'
+
+/*
+* This is the note component , returns some sort of html based on some conditions 
+*/
 
 const Note = ({ noteId }) => {
 
-    const note = useSelector(state => selectNoteById(state, noteId))
+    // it will get this note from the data that is already queried 
+    const { note } = useGetNotesQuery("notesList", {
+        selectFromResult: ({ data }) => ({
+            note: data?.entities[noteId]
+        }),
+    })
 
     const navigate = useNavigate()
 
@@ -44,4 +53,6 @@ const Note = ({ noteId }) => {
 
     } else return null
 }
-export default Note
+// using memo will cause React to skip rendering a component if its props have not changed 
+const memoizedNote = memo(Note)
+export default memoizedNote

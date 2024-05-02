@@ -4,17 +4,17 @@ import { usersApiSlice } from '../users/usersApiSlice';
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
-const Prefetch = () => {
-    useEffect(() => {
-        console.log('subscribing')
-        const notes = store.dispatch(notesApiSlice.endpoints.getNotes.initiate())
-        const users = store.dispatch(usersApiSlice.endpoints.getUsers.initiate())
+/*
+* Fetches the notes and users data before it gets displayed 
+* useEffects happen after a render 
+* store is an object with a few methods on it 
+*/
 
-        return () => {
-            console.log('unsubscribing')
-            notes.unsubscribe()
-            users.unsubscribe()
-        }
+const Prefetch = () => {
+
+    useEffect(() => {
+        store.dispatch(notesApiSlice.util.prefetch('getNotes', 'notesList', { force: true }))
+        store.dispatch(usersApiSlice.util.prefetch('getUsers', 'usersList', { force: true }))
     }, [])
 
     return <Outlet />
